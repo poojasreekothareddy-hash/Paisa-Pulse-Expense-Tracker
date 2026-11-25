@@ -1,0 +1,1751 @@
+<html>
+
+<head>
+
+    <title>Paisa Pulse</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color:lightblue;
+        }
+
+        .page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .box {
+            width: 400px;
+            padding: 30px;
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 7px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .blue {
+            background-color: darkblue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .red {
+            color: red;
+        }
+
+        #registerPage {
+            display: none;
+        }
+
+        #appPage {
+            display: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 220px;
+            height: 100vh;
+            background-color: darkblue;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar button {
+            width: 190px;
+            background-color: blue;
+            color: white;
+            border: none;
+            display: block;
+        }
+
+        .logout {
+            background-color: red !important;
+            margin-top: 250px !important;
+        }
+
+        .main {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            width: 200px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card p {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .form {
+            background-color: white;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .income {
+            background-color: green;
+            color: white;
+            border: none;
+        }
+
+        .expense {
+            background-color: darkblue;
+            color: white;
+            border: none;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: darkblue;
+            color: white;
+        }
+
+        .delete {
+            background-color: red;
+            color: white;
+            border: none;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .report-card {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .report-card select {
+            width: auto;
+            min-width: 120px;
+        }
+
+        .monthly-chart {
+            width: 100%;
+            max-width: 900px;
+            height: 350px;
+            display: block;
+            background: white;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar { position: static; width: auto; height: auto; }
+            .sidebar button { display: inline-block; width: auto; }
+            .main { margin-left: 0; padding: 15px; }
+            .cards { flex-wrap: wrap; }
+            .logout { margin-top: 5px !important; }
+        }
+
+
+        /* Colorful login and registration screens */
+        #loginPage, #registerPage {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            min-height: 100vh;
+            padding: 30px 18px;
+            box-sizing: border-box;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255,255,255,.25) 0 5%, transparent 22%),
+                radial-gradient(circle at 88% 82%, rgba(255,190,230,.35) 0 4%, transparent 24%),
+                linear-gradient(125deg, #ff6b6b 0%, #ff8e53 22%, #ff5da2 48%, #8b5cf6 74%, #4361ee 100%);
+            animation: authBackground 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes authBackground {
+            from { background-position: 0% 50%; }
+            to { background-position: 100% 50%; }
+        }
+
+        #loginPage::before, #registerPage::before,
+        #loginPage::after, #registerPage::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        #loginPage::before, #registerPage::before {
+            width: 340px;
+            height: 340px;
+            top: -125px;
+            left: -95px;
+            background: linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,255,255,.04));
+            border: 1px solid rgba(255,255,255,.25);
+        }
+
+        #loginPage::after, #registerPage::after {
+            width: 420px;
+            height: 420px;
+            right: -150px;
+            bottom: -205px;
+            background: linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,.03));
+            border: 1px solid rgba(255,255,255,.2);
+        }
+
+        #loginPage .box, #registerPage .box {
+            position: relative;
+            z-index: 1;
+            width: min(440px, 94vw);
+            padding: 40px 36px 34px;
+            box-sizing: border-box;
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(255,255,255,.8);
+            border-radius: 28px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(57, 22, 105, .30);
+            backdrop-filter: blur(14px);
+            animation: authCardIn .65s ease both;
+        }
+
+        @keyframes authCardIn {
+            from { opacity: 0; transform: translateY(22px) scale(.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        #loginPage .box h1, #registerPage .box h1 {
+            display: inline-block;
+            margin: 0;
+            padding: 11px 20px;
+            color: white;
+            font-size: 25px;
+            letter-spacing: .5px;
+            border-radius: 16px;
+            background: linear-gradient(110deg, #ff6b6b, #f72585, #7b2ff7);
+            box-shadow: 0 9px 22px rgba(194, 24, 91, .25);
+        }
+
+        #loginPage .box h2, #registerPage .box h2 {
+            margin: 22px 0 8px;
+            color: #34216f;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        #loginPage .box h2::after, #registerPage .box h2::after {
+            content: "";
+            display: block;
+            width: 54px;
+            height: 4px;
+            margin: 10px auto 20px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #ff8a5b, #f72585, #7b2ff7);
+        }
+
+        #loginPage input, #registerPage input {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 9px 0;
+            padding: 15px 17px;
+            border: 2px solid #eee9ff;
+            border-radius: 13px;
+            background: #f8f6ff;
+            color: #292344;
+            outline: none;
+            font-size: 14px;
+            transition: border-color .22s, box-shadow .22s, background .22s, transform .22s;
+        }
+
+        #loginPage input::placeholder, #registerPage input::placeholder {
+            color: #9892ad;
+        }
+
+        #loginPage input:focus, #registerPage input:focus {
+            border-color: #a855f7;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, .13);
+            transform: translateY(-1px);
+        }
+
+        #loginPage .blue, #registerPage .blue {
+            min-width: 145px;
+            margin: 12px 4px 5px;
+            padding: 13px 27px;
+            border: 0;
+            border-radius: 13px;
+            background: linear-gradient(105deg, #ff6b6b, #f72585 52%, #7b2ff7);
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .3px;
+            box-shadow: 0 9px 20px rgba(190, 24, 93, .24);
+            transition: transform .2s, box-shadow .2s, filter .2s;
+        }
+
+        #loginPage .blue:hover, #registerPage .blue:hover {
+            transform: translateY(-3px);
+            filter: saturate(1.15);
+            box-shadow: 0 13px 25px rgba(123, 47, 247, .28);
+        }
+
+        #loginPage .box .auth-subtitle, #registerPage .box .auth-subtitle {
+            margin: 0 0 18px;
+            color: #8b829f;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        #loginPage .box p, #registerPage .box p {
+            margin: 20px 0 3px;
+            color: #77718d;
+            font-size: 14px;
+        }
+
+        #loginPage .red, #registerPage .red {
+            display: block;
+            text-align: left;
+            padding-left: 5px;
+            color: #e11d48;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+        /* Floating money decorations */
+        .money-decor {
+            position: absolute;
+            z-index: 0;
+            color: rgba(255,255,255,.88);
+            font-weight: 800;
+            line-height: 1;
+            text-shadow: 0 5px 18px rgba(70, 20, 100, .18);
+            pointer-events: none;
+            user-select: none;
+            animation: moneyFloat 5s ease-in-out infinite;
+        }
+
+        .money-decor.coin { font-size: 54px; }
+        .money-decor.symbol { font-size: 42px; }
+        .money-decor.small { font-size: 30px; opacity: .72; }
+
+        .money-decor.d1 { top: 13%; left: 9%; animation-delay: -.5s; transform: rotate(-14deg); }
+        .money-decor.d2 { top: 22%; right: 10%; animation-delay: -2s; transform: rotate(12deg); }
+        .money-decor.d3 { bottom: 17%; left: 13%; animation-delay: -1.3s; transform: rotate(9deg); }
+        .money-decor.d4 { bottom: 13%; right: 12%; animation-delay: -3s; transform: rotate(-12deg); }
+        .money-decor.d5 { top: 49%; left: 4%; animation-delay: -2.5s; }
+        .money-decor.d6 { top: 53%; right: 5%; animation-delay: -.8s; }
+
+        @keyframes moneyFloat {
+            0%, 100% { translate: 0 0; }
+            50% { translate: 0 -15px; }
+        }
+
+        @media (max-width: 600px) {
+            .money-decor.coin { font-size: 38px; }
+            .money-decor.symbol { font-size: 30px; }
+            .money-decor.small { font-size: 23px; }
+            .money-decor.d1 { left: 3%; top: 7%; }
+            .money-decor.d2 { right: 3%; top: 10%; }
+            .money-decor.d3 { left: 3%; bottom: 7%; }
+            .money-decor.d4 { right: 3%; bottom: 8%; }
+            .money-decor.d5, .money-decor.d6 { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            #loginPage .box, #registerPage .box { padding: 32px 23px 28px; }
+            #loginPage .box h1, #registerPage .box h1 { font-size: 22px; }
+            #loginPage .box h2, #registerPage .box h2 { font-size: 24px; }
+        }
+
+        /* Matching colorful theme for the expense tracker after login */
+        #appPage {
+            min-height: 100vh;
+            color: #34216f;
+            background:
+                radial-gradient(circle at 92% 8%, rgba(255, 111, 174, .14), transparent 25%),
+                radial-gradient(circle at 8% 92%, rgba(139, 92, 246, .13), transparent 28%),
+                linear-gradient(135deg, #fff4f8 0%, #f4efff 48%, #eef4ff 100%);
+        }
+
+        #appPage .sidebar {
+            box-sizing: border-box;
+            width: 245px;
+            padding: 28px 18px;
+            color: white;
+            background: linear-gradient(165deg, #34216f 0%, #7138bd 48%, #e6499a 100%);
+            box-shadow: 8px 0 28px rgba(73, 35, 130, .16);
+        }
+
+        #appPage .sidebar h2 {
+            margin: 4px 8px 30px;
+            color: #fff;
+            font-size: 25px;
+            letter-spacing: .4px;
+        }
+
+        #appPage .sidebar button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 13px 14px;
+            border: 1px solid rgba(255,255,255,.17);
+            border-radius: 12px;
+            color: white;
+            background: rgba(255,255,255,.12);
+            text-align: left;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background .2s, transform .2s, box-shadow .2s;
+        }
+
+        #appPage .sidebar button:hover {
+            background: rgba(255,255,255,.25);
+            transform: translateX(4px);
+            box-shadow: 0 7px 18px rgba(28, 12, 65, .18);
+        }
+
+        #appPage .sidebar .logout {
+            margin-top: 190px !important;
+            background: linear-gradient(100deg, #ff6b6b, #f72585) !important;
+            text-align: center;
+        }
+
+        #appPage .main {
+            margin-left: 245px;
+            padding: 34px;
+        }
+
+        #appPage .main > h1 {
+            margin: 0 0 10px;
+            color: #382078;
+            font-size: 32px;
+        }
+
+        #appPage .main > h3 {
+            color: #82769f;
+            font-weight: 500;
+        }
+
+        #appPage .cards {
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        #appPage .card {
+            position: relative;
+            overflow: hidden;
+            flex: 1 1 190px;
+            width: auto;
+            min-height: 130px;
+            padding: 23px;
+            border: 1px solid rgba(255,255,255,.9);
+            border-radius: 20px;
+            background: rgba(255,255,255,.88);
+            box-shadow: 0 12px 30px rgba(76, 45, 130, .09);
+            text-align: left;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        #appPage .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 17px 35px rgba(76, 45, 130, .14);
+        }
+
+        #appPage .card:nth-child(1) { border-top: 5px solid #20b981; }
+        #appPage .card:nth-child(2) { border-top: 5px solid #f05b8d; }
+        #appPage .card:nth-child(3) { border-top: 5px solid #8b5cf6; }
+
+        #appPage .card h3 {
+            margin: 0;
+            color: #82769f;
+            font-size: 15px;
+        }
+
+        #appPage .card p {
+            margin: 16px 0 0;
+            color: #382078;
+            font-size: 29px;
+        }
+
+        #appPage .form {
+            margin-top: 24px;
+            padding: 26px;
+            border: 1px solid rgba(255,255,255,.95);
+            border-radius: 20px;
+            background: rgba(255,255,255,.9);
+            box-shadow: 0 12px 32px rgba(76, 45, 130, .08);
+        }
+
+        #appPage .form h2,
+        #appPage .report-card h3 {
+            margin-top: 0;
+            color: #48258b;
+        }
+
+        #appPage .form input,
+        #appPage .form select,
+        #appPage .report-card select {
+            box-sizing: border-box;
+            max-width: 100%;
+            margin: 8px 8px 8px 0;
+            padding: 12px 14px;
+            border: 1.5px solid #e7ddfa;
+            border-radius: 11px;
+            outline: none;
+            background: #faf8ff;
+            color: #34216f;
+            font-size: 14px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        #appPage .form input:focus,
+        #appPage .form select:focus,
+        #appPage .report-card select:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, .12);
+        }
+
+        #appPage button {
+            padding: 11px 18px;
+            border: 0;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .2s, filter .2s, box-shadow .2s;
+        }
+
+        #appPage .form button,
+        #appPage #history > button {
+            margin-top: 10px;
+            background: linear-gradient(105deg, #ff6b6b, #f72585 52%, #7b2ff7);
+            box-shadow: 0 7px 16px rgba(190, 24, 93, .18);
+        }
+
+        #appPage button:hover {
+            transform: translateY(-2px);
+            filter: saturate(1.12);
+            box-shadow: 0 9px 20px rgba(123, 47, 247, .2);
+        }
+
+        #appPage .income {
+            background: linear-gradient(100deg, #10b981, #059669);
+        }
+
+        #appPage .expense {
+            background: linear-gradient(100deg, #ff6b6b, #f72585);
+        }
+
+        #appPage table {
+            overflow: hidden;
+            border-radius: 12px;
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: 0 5px 18px rgba(76, 45, 130, .06);
+        }
+
+        #appPage th {
+            border-color: rgba(255,255,255,.15);
+            background: linear-gradient(100deg, #49308f, #a23bb8);
+            color: white;
+        }
+
+        #appPage td {
+            border-color: #eee8f8;
+            color: #51456f;
+            background: rgba(255,255,255,.9);
+        }
+
+        #appPage tr:nth-child(even) td {
+            background: #faf7ff;
+        }
+
+        #appPage .delete {
+            background: linear-gradient(100deg, #ff6b6b, #e11d68);
+        }
+
+        #appPage .report-card {
+            border: 1px solid #f0e8ff;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 8px 22px rgba(76, 45, 130, .06);
+        }
+
+        #appPage .monthly-chart {
+            max-width: 100%;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #fff, #fbf8ff);
+        }
+
+        @media (max-width: 800px) {
+            #appPage .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 18px;
+            }
+            #appPage .sidebar h2 { margin-bottom: 12px; }
+            #appPage .sidebar button {
+                display: inline-block;
+                width: auto;
+                margin: 5px 3px;
+                text-align: center;
+            }
+            #appPage .sidebar .logout { margin-top: 5px !important; }
+            #appPage .main { margin-left: 0; padding: 20px 14px; }
+            #appPage .cards { flex-wrap: wrap; }
+            #appPage .form { padding: 19px; }
+            #appPage table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div id="loginPage" class="page">
+    <span class="money-decor coin d1" aria-hidden="true">🪙</span>
+    <span class="money-decor symbol d2" aria-hidden="true">₹</span>
+    <span class="money-decor small d3" aria-hidden="true">💸</span>
+    <span class="money-decor coin d4" aria-hidden="true">💰</span>
+    <span class="money-decor symbol d5" aria-hidden="true">₹</span>
+    <span class="money-decor small d6" aria-hidden="true">🪙</span>
+
+
+    <div class="box">
+
+        <h1>Paisa Pulse</h1>
+
+        <h2>Login</h2>
+
+        <p class="auth-subtitle">Your money journey starts here ✨</p>
+
+        <form onsubmit="return login()">
+
+            <input type="text"
+                   id="loginEmail"
+                   placeholder="Please enter email id">
+
+            <span id="loginEmailError"
+                  class="red"></span>
+
+            <br>
+
+            <input type="password"
+                   id="loginPassword"
+                   placeholder="Please enter password">
+
+            <span id="loginPasswordError"
+                  class="red"></span>
+
+            <br>
+
+            <button type="submit"
+                    class="blue">
+                Login
+            </button>
+
+        </form>
+
+        <p>Don't have an account?</p>
+
+        <button class="blue"
+                onclick="showRegister()">
+            Register
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="registerPage" class="page">
+    <span class="money-decor coin d1" aria-hidden="true">🪙</span>
+    <span class="money-decor symbol d2" aria-hidden="true">₹</span>
+    <span class="money-decor small d3" aria-hidden="true">💸</span>
+    <span class="money-decor coin d4" aria-hidden="true">💰</span>
+    <span class="money-decor symbol d5" aria-hidden="true">₹</span>
+    <span class="money-decor small d6" aria-hidden="true">🪙</span>
+
+
+    <div class="box">
+
+        <h1>Paisa Pulse</h1>
+
+        <h2>Create Account</h2>
+
+        <p class="auth-subtitle">Join Paisa Pulse and take control of your money 💖</p>
+
+        <form onsubmit="return register()">
+
+            <input type="text"
+                   id="registerName"
+                   placeholder="Please enter username">
+
+            <span id="nameError"
+                  class="red"></span>
+
+            <br>
+
+            <input type="text"
+                   id="registerEmail"
+                   placeholder="Please enter email id">
+
+            <span id="emailError"
+                  class="red"></span>
+
+            <br>
+
+            <input type="password"
+                   id="registerPassword"
+                   placeholder="Please enter password">
+
+            <span id="passwordError"
+                  class="red"></span>
+
+            <br>
+
+            <input type="password"
+                   id="confirmPassword"
+                   placeholder="Confirm password">
+
+            <span id="confirmError"
+                  class="red"></span>
+
+            <br>
+
+            <button type="submit"
+                    class="blue">
+                Register
+            </button>
+
+        </form>
+
+        <p>Already have an account?</p>
+
+        <button class="blue"
+                onclick="showLogin()">
+            Login
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="appPage">
+
+    <div class="sidebar">
+
+        <h2>Paisa Pulse</h2>
+
+        <button onclick="dashboard()">
+            Dashboard
+        </button>
+
+        <button onclick="incomePage()">
+            Add Income
+        </button>
+
+        <button onclick="expensePage()">
+            Add Expense
+        </button>
+
+        <button onclick="historyPage()">
+            Expense History
+        </button>
+
+        <button onclick="incomeReportsPage()">
+            Monthly / Yearly Income
+        </button>
+
+        <button onclick="logout()"
+                class="logout">
+            Logout
+        </button>
+
+    </div>
+
+
+    <div class="main">
+
+        <h1>Dashboard</h1>
+
+        <h3>
+            Welcome
+            <span id="displayName"></span>
+        </h3>
+
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h3>Total Income</h3>
+
+                <p id="totalIncome">
+                    ₹0
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Total Expense</h3>
+
+                <p id="totalExpense">
+                    ₹0
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Balance</h3>
+
+                <p id="balance">
+                    ₹0
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form"
+             id="incomeForm">
+
+            <h2>Add Income</h2>
+
+            <input type="text"
+                   id="incomeName"
+                   placeholder="Income name">
+
+            <input type="number"
+                   id="incomeAmount"
+                   placeholder="Income amount">
+
+            <input type="date" id="incomeDate">
+
+            <br>
+
+            <button class="income"
+                    onclick="addIncome()">
+                Add Income
+            </button>
+
+        </div>
+
+
+        <div class="form"
+             id="expenseForm">
+
+            <h2>Add Expense</h2>
+
+            <input type="text"
+                   id="expenseName"
+                   placeholder="Expense name">
+
+            <input type="number"
+                   id="expenseAmount"
+                   placeholder="Expense amount">
+
+            <select id="category">
+
+                <option value="">
+                    Select Category
+                </option>
+
+                <option value="Food">
+                    Food
+                </option>
+
+                <option value="Travel">
+                    Travel
+                </option>
+
+                <option value="Shopping">
+                    Shopping
+                </option>
+
+                <option value="Education">
+                    Education
+                </option>
+
+                <option value="Entertainment">
+                    Entertainment
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+            <input type="date"
+                   id="expenseDate">
+
+            <br>
+
+            <button class="expense"
+                    onclick="addExpense()">
+                Add Expense
+            </button>
+
+        </div>
+
+
+        <div class="form" id="incomeReports">
+            <h2>Monthly and Yearly Income Reports</h2>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <h3>Monthly Income</h3>
+                    <label for="reportYear">Select Year:</label>
+                    <select id="reportYear" onchange="displayIncomeReports()"></select>
+                    <table>
+                        <thead>
+                            <tr><th>Month</th><th>Total Income</th></tr>
+                        </thead>
+                        <tbody id="monthlyIncomeTable"></tbody>
+                        <tfoot>
+                            <tr><th>Year Total</th><th id="selectedYearTotal">₹0</th></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="report-card">
+                    <h3>Yearly Income</h3>
+                    <table>
+                        <thead><tr><th>Year</th><th>Total Income</th></tr></thead>
+                        <tbody id="yearlyIncomeTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <h3>Monthly Income Graph</h3>
+                <p>Shows your income month by month for the selected year.</p>
+                <canvas id="monthlyIncomeChart" class="monthly-chart" width="900" height="350"></canvas>
+            </div>
+
+            <div class="report-card">
+                <h3>Monthly Expense Graph</h3>
+                <p>Shows your expenses month by month for the selected year.</p>
+                <canvas id="monthlyExpenseChart" class="monthly-chart" width="900" height="350"></canvas>
+            </div>
+
+            <div class="report-card">
+                <h3>Income Records</h3>
+                <table>
+                    <thead><tr><th>Income Name</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead>
+                    <tbody id="incomeTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="form"
+             id="history">
+
+            <h2>Expense History</h2>
+
+            <input type="text"
+                   id="search"
+                   placeholder="Search expense"
+                   onkeyup="displayExpenses()">
+
+            <select id="filter"
+                    onchange="displayExpenses()">
+
+                <option value="All">
+                    All
+                </option>
+
+                <option value="Food">
+                    Food
+                </option>
+
+                <option value="Travel">
+                    Travel
+                </option>
+
+                <option value="Shopping">
+                    Shopping
+                </option>
+
+                <option value="Education">
+                    Education
+                </option>
+
+                <option value="Entertainment">
+                    Entertainment
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+
+            <table>
+
+                <tr>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Category
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+                <tbody id="expenseTable">
+
+                </tbody>
+
+            </table>
+
+            <br>
+
+            <button onclick="clearExpenses()">
+                Clear All
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let userName = "";
+let userEmail = "";
+let userPassword = "";
+
+let incomes = [];
+let expenses = [];
+
+const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+
+
+function showRegister() {
+
+    document.getElementById("loginPage").style.display = "none";
+
+    document.getElementById("registerPage").style.display = "flex";
+
+}
+
+
+function showLogin() {
+
+    document.getElementById("registerPage").style.display = "none";
+
+    document.getElementById("loginPage").style.display = "flex";
+
+}
+
+
+function register() {
+
+    let name =
+        document.getElementById("registerName").value;
+
+    let email =
+        document.getElementById("registerEmail").value;
+
+    let password =
+        document.getElementById("registerPassword").value;
+
+    let confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+    let valid = true;
+
+
+    document.getElementById("nameError").innerHTML = "";
+
+    document.getElementById("emailError").innerHTML = "";
+
+    document.getElementById("passwordError").innerHTML = "";
+
+    document.getElementById("confirmError").innerHTML = "";
+
+
+    if (name === "") {
+
+        document.getElementById("nameError").innerHTML =
+            "Please enter username";
+
+        valid = false;
+
+    }
+
+
+    if (email === "") {
+
+        document.getElementById("emailError").innerHTML =
+            "Please enter email id";
+
+        valid = false;
+
+    }
+
+    else if (!email.includes("@")) {
+
+        document.getElementById("emailError").innerHTML =
+            "Please enter a valid email id";
+
+        valid = false;
+
+    }
+
+
+    if (password === "") {
+
+        document.getElementById("passwordError").innerHTML =
+            "Please enter password";
+
+        valid = false;
+
+    }
+
+    else if (password.length < 8) {
+
+        document.getElementById("passwordError").innerHTML =
+            "Password must contain at least 8 characters";
+
+        valid = false;
+
+    }
+
+    else if (!password.match(/[0-9]/)) {
+
+        document.getElementById("passwordError").innerHTML =
+            "Password must contain at least one number";
+
+        valid = false;
+
+    }
+
+
+    if (confirmPassword === "") {
+
+        document.getElementById("confirmError").innerHTML =
+            "Please confirm password";
+
+        valid = false;
+
+    }
+
+    else if (password !== confirmPassword) {
+
+        document.getElementById("confirmError").innerHTML =
+            "Passwords do not match";
+
+        valid = false;
+
+    }
+
+
+    if (valid) {
+
+        userName = name;
+
+        userEmail = email;
+
+        userPassword = password;
+
+        alert("Registration successful");
+
+        document.getElementById("registerName").value = "";
+
+        document.getElementById("registerEmail").value = "";
+
+        document.getElementById("registerPassword").value = "";
+
+        document.getElementById("confirmPassword").value = "";
+
+        showLogin();
+
+    }
+
+
+    return false;
+
+}
+
+
+function login() {
+
+    let email =
+        document.getElementById("loginEmail").value;
+
+    let password =
+        document.getElementById("loginPassword").value;
+
+    let valid = true;
+
+
+    document.getElementById("loginEmailError").innerHTML = "";
+
+    document.getElementById("loginPasswordError").innerHTML = "";
+
+
+    if (email === "") {
+
+        document.getElementById("loginEmailError").innerHTML =
+            "Please enter email id";
+
+        valid = false;
+
+    }
+
+    else if (!email.includes("@")) {
+
+        document.getElementById("loginEmailError").innerHTML =
+            "Please enter a valid email id";
+
+        valid = false;
+
+    }
+
+
+    if (password === "") {
+
+        document.getElementById("loginPasswordError").innerHTML =
+            "Please enter password";
+
+        valid = false;
+
+    }
+
+
+    if (valid) {
+
+        if (email === userEmail &&
+            password === userPassword) {
+
+            document.getElementById("loginPage").style.display =
+                "none";
+
+            document.getElementById("appPage").style.display =
+                "block";
+
+            document.getElementById("displayName").innerHTML =
+                userName;
+
+        }
+
+        else {
+
+            alert("Invalid email or password");
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+function addIncome() {
+
+    let name = document.getElementById("incomeName").value.trim();
+    let amount = Number(document.getElementById("incomeAmount").value);
+    let date = document.getElementById("incomeDate").value;
+
+    if (name === "") {
+        alert("Please enter income name");
+    }
+    else if (document.getElementById("incomeAmount").value === "" || amount <= 0) {
+        alert("Please enter valid income amount");
+    }
+    else if (date === "") {
+        alert("Please select income date");
+    }
+    else {
+        incomes.push({ name: name, amount: amount, date: date });
+
+        document.getElementById("incomeName").value = "";
+        document.getElementById("incomeAmount").value = "";
+        document.getElementById("incomeDate").value = "";
+
+        updateDashboard();
+        alert("Income added successfully");
+    }
+}
+
+
+function addExpense() {
+
+    let name =
+        document.getElementById("expenseName").value;
+
+    let amount =
+        document.getElementById("expenseAmount").value;
+
+    let category =
+        document.getElementById("category").value;
+
+    let date =
+        document.getElementById("expenseDate").value;
+
+
+    if (name === "") {
+
+        alert("Please enter expense name");
+
+    }
+
+    else if (amount === "") {
+
+        alert("Please enter expense amount");
+
+    }
+
+    else if (Number(amount) <= 0) {
+
+        alert("Please enter valid amount");
+
+    }
+
+    else if (category === "") {
+
+        alert("Please select category");
+
+    }
+
+    else if (date === "") {
+
+        alert("Please select date");
+
+    }
+
+    else {
+
+        let expense = {
+
+            name: name,
+
+            amount: Number(amount),
+
+            category: category,
+
+            date: date
+
+        };
+
+
+        expenses.push(expense);
+
+
+        document.getElementById("expenseName").value = "";
+
+        document.getElementById("expenseAmount").value = "";
+
+        document.getElementById("category").value = "";
+
+        document.getElementById("expenseDate").value = "";
+
+
+        updateDashboard();
+
+        alert("Expense added successfully");
+
+    }
+
+}
+
+
+function updateDashboard() {
+
+    let totalIncome = 0;
+    for (let i = 0; i < incomes.length; i++) {
+        totalIncome += incomes[i].amount;
+    }
+
+    let total = 0;
+
+
+    for (let i = 0; i < expenses.length; i++) {
+
+        total =
+            total + expenses[i].amount;
+
+    }
+
+
+    let balance =
+        totalIncome - total;
+
+
+    document.getElementById("totalIncome").innerHTML =
+        "₹" + totalIncome.toLocaleString("en-IN");
+
+    document.getElementById("totalExpense").innerHTML =
+        "₹" + total.toLocaleString("en-IN");
+
+    document.getElementById("balance").innerHTML =
+        "₹" + balance.toLocaleString("en-IN");
+
+    displayExpenses();
+    displayIncomeReports();
+
+}
+
+
+function incomeReportsPage() {
+    document.getElementById("incomeReports").scrollIntoView();
+    displayIncomeReports();
+}
+
+function displayIncomeReports() {
+    let years = [...new Set([
+        ...incomes.map(item => item.date.substring(0, 4)),
+        ...expenses.map(item => item.date.substring(0, 4))
+    ])].sort();
+    let yearSelect = document.getElementById("reportYear");
+    let previousYear = yearSelect.value;
+
+    if (years.length === 0) years = [String(new Date().getFullYear())];
+
+    yearSelect.innerHTML = "";
+    years.forEach(year => {
+        yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+    });
+    if (years.includes(previousYear)) yearSelect.value = previousYear;
+
+    let selectedYear = yearSelect.value;
+    let monthlyIncome = Array(12).fill(0);
+    let monthlyExpense = Array(12).fill(0);
+
+    incomes.forEach(item => {
+        if (item.date.substring(0, 4) === selectedYear) {
+            let month = Number(item.date.substring(5, 7)) - 1;
+            if (month >= 0 && month < 12) monthlyIncome[month] += item.amount;
+        }
+    });
+
+    expenses.forEach(item => {
+        if (item.date.substring(0, 4) === selectedYear) {
+            let month = Number(item.date.substring(5, 7)) - 1;
+            if (month >= 0 && month < 12) monthlyExpense[month] += item.amount;
+        }
+    });
+
+    let monthlyTable = document.getElementById("monthlyIncomeTable");
+    monthlyTable.innerHTML = "";
+    monthlyIncome.forEach((amount, index) => {
+        monthlyTable.innerHTML += `<tr><td>${monthNames[index]}</td><td>₹${amount.toLocaleString("en-IN")}</td></tr>`;
+    });
+    let selectedTotal = monthlyIncome.reduce((sum, amount) => sum + amount, 0);
+    document.getElementById("selectedYearTotal").innerText = "₹" + selectedTotal.toLocaleString("en-IN");
+
+    let yearlyTotals = {};
+    incomes.forEach(item => {
+        let year = item.date.substring(0, 4);
+        yearlyTotals[year] = (yearlyTotals[year] || 0) + item.amount;
+    });
+
+    let yearlyTable = document.getElementById("yearlyIncomeTable");
+    yearlyTable.innerHTML = "";
+    Object.keys(yearlyTotals).sort().forEach(year => {
+        yearlyTable.innerHTML += `<tr><td>${year}</td><td>₹${yearlyTotals[year].toLocaleString("en-IN")}</td></tr>`;
+    });
+    if (Object.keys(yearlyTotals).length === 0) {
+        yearlyTable.innerHTML = "<tr><td colspan='2'>No income records yet</td></tr>";
+    }
+
+    let incomeTable = document.getElementById("incomeTable");
+    incomeTable.innerHTML = "";
+    incomes.forEach((item, index) => {
+        incomeTable.innerHTML += `<tr><td>${item.name}</td><td>₹${item.amount.toLocaleString("en-IN")}</td><td>${item.date}</td><td><button class="delete" onclick="deleteIncome(${index})">Delete</button></td></tr>`;
+    });
+    if (incomes.length === 0) {
+        incomeTable.innerHTML = "<tr><td colspan='4'>No income records yet</td></tr>";
+    }
+
+    drawMonthlyChart("monthlyIncomeChart", monthlyIncome, "#16803c", "income");
+    drawMonthlyChart("monthlyExpenseChart", monthlyExpense, "#e05252", "expense");
+}
+
+function drawMonthlyChart(canvasId, monthlyTotals, barColor, type) {
+    let canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    let ctx = canvas.getContext("2d");
+    let width = canvas.width;
+    let height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    let maxValue = Math.max(...monthlyTotals, 1);
+    let left = 85, right = 25, top = 25, bottom = 75;
+    let chartWidth = width - left - right;
+    let chartHeight = height - top - bottom;
+
+    ctx.font = "13px Arial";
+    ctx.strokeStyle = "#555";
+    ctx.fillStyle = "#222";
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, height - bottom);
+    ctx.lineTo(width - right, height - bottom);
+    ctx.stroke();
+
+    for (let i = 0; i <= 5; i++) {
+        let value = maxValue * i / 5;
+        let y = height - bottom - (chartHeight * i / 5);
+        ctx.strokeStyle = "#dddddd";
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(width - right, y);
+        ctx.stroke();
+        ctx.fillStyle = "#222";
+        ctx.textAlign = "right";
+        ctx.fillText("₹" + Math.round(value).toLocaleString("en-IN"), left - 8, y + 4);
+    }
+
+    let slotWidth = chartWidth / 12;
+    let barWidth = Math.min(42, slotWidth * 0.58);
+    monthlyTotals.forEach((amount, index) => {
+        let barHeight = (amount / maxValue) * chartHeight;
+        let x = left + index * slotWidth + (slotWidth - barWidth) / 2;
+        let y = height - bottom - barHeight;
+        ctx.fillStyle = barColor;
+        ctx.fillRect(x, y, barWidth, barHeight);
+        ctx.fillStyle = "#222";
+        ctx.textAlign = "center";
+        ctx.fillText(monthNames[index].substring(0, 3), x + barWidth / 2, height - bottom + 22);
+        if (amount > 0) {
+            ctx.fillText("₹" + amount.toLocaleString("en-IN"), x + barWidth / 2, Math.max(top + 12, y - 8));
+        }
+    });
+
+    if (monthlyTotals.every(amount => amount === 0)) {
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#666";
+        ctx.fillText(`Add ${type} records to see the monthly graph`, width / 2, height / 2);
+    }
+}
+
+function deleteIncome(index) {
+    incomes.splice(index, 1);
+    updateDashboard();
+    alert("Income record deleted");
+}
+
+
+function displayExpenses() {
+
+    let table =
+        document.getElementById("expenseTable");
+
+    let search =
+        document.getElementById("search").value.toLowerCase();
+
+    let filter =
+        document.getElementById("filter").value;
+
+
+    table.innerHTML = "";
+
+
+    for (let i = 0; i < expenses.length; i++) {
+
+        let expense =
+            expenses[i];
+
+
+        if (filter !== "All" &&
+            expense.category !== filter) {
+
+            continue;
+
+        }
+
+
+        if (!expense.name.toLowerCase().includes(search)) {
+
+            continue;
+
+        }
+
+
+        let row =
+            "<tr>" +
+
+            "<td>" +
+            expense.name +
+            "</td>" +
+
+            "<td>₹" +
+            expense.amount +
+            "</td>" +
+
+            "<td>" +
+            expense.category +
+            "</td>" +
+
+            "<td>" +
+            expense.date +
+            "</td>" +
+
+            "<td>" +
+
+            "<button class='delete' " +
+            "onclick='deleteExpense(" +
+            i +
+            ")'>" +
+
+            "Delete" +
+
+            "</button>" +
+
+            "</td>" +
+
+            "</tr>";
+
+
+        table.innerHTML =
+            table.innerHTML + row;
+
+    }
+
+}
+
+
+function deleteExpense(index) {
+
+    expenses.splice(index, 1);
+
+    updateDashboard();
+
+    alert("Expense deleted successfully");
+
+}
+
+
+function clearExpenses() {
+
+    expenses = [];
+
+    updateDashboard();
+
+    alert("All expenses deleted");
+
+}
+
+
+function dashboard() {
+
+    window.scrollTo(0, 0);
+
+}
+
+
+function incomePage() {
+
+    document.getElementById("incomeForm")
+        .scrollIntoView();
+
+}
+
+
+function expensePage() {
+
+    document.getElementById("expenseForm")
+        .scrollIntoView();
+
+}
+
+
+function historyPage() {
+
+    document.getElementById("history")
+        .scrollIntoView();
+
+}
+
+
+function logout() {
+
+    document.getElementById("appPage").style.display =
+        "none";
+
+    document.getElementById("loginPage").style.display =
+        "flex";
+
+    document.getElementById("loginEmail").value = "";
+
+    document.getElementById("loginPassword").value = "";
+
+}
+
+</script>
+
+</body>
+
+</html>
